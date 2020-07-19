@@ -1,0 +1,8 @@
+#div {
+    border: 1px dotted red;
+    position: absolute;
+}
+
+#body {
+    background-color: black;
+}
