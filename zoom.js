@@ -1,14 +1,18 @@
-const MAX_ITER = 50;
+const MAX_ITER = 100;
 var width = window.innerWidth;
 var height = window.innerHeight;
 
 var ratio = 1;
 
-var zoom = 2;
+let REAL_SET = { start: -2, end: 1 }
+let IMAGINARY_SET = { start: -1, end: 1 }
+let ZOOM_FACTOR = 0.1
 
 var div = document.getElementById('div');
 var x1 = 0;
 var y1 = 0;
+var x2 = width;
+var y2 = height;
 
 var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext('2d');
@@ -25,19 +29,8 @@ function draw(){
   for(var x = 0 ; x < width ; x++){
     for(var y = 0 ; y < height ; y++){
 
-      //relacion los puntos del canvas con el punto a calcular
-
-      // var xi = (x - x1) * zoom;
-      // var yi = (y - y1) * zoom;
-
-      //var xi = (x - x1) * ratio + x1; //funciona
-      //var yi = (y - y1) * ratio + y1; //funciona
-
       var xi = x1 - (x1 - x) * ratio;
       var yi = y1 - (y1 - y) * ratio;
-
-      //var xi = x * scale - x1;
-      //var yi = y * scale - y1;
 
       var mandelbrot_point = calculateSet(xi, yi, width, height);
 
@@ -58,8 +51,8 @@ function draw(){
 // As we know, if |Zn| > 2 then the set converge, so we need to iterate between -2 and 2
 function calculateSet(x0,y0,x,y){
 
-  var a = (-2 + (x0 / x) * (1 + 2));
-  var b = (-1 + (y0 / y) * (1 + 1));
+  var a =  REAL_SET.start + (x0 / width) * (REAL_SET.end - REAL_SET.start);
+  var b = IMAGINARY_SET.start + (y0 / height) * (IMAGINARY_SET.end - IMAGINARY_SET.start);
 
   var ca = a;
   var cb = b;
@@ -81,19 +74,22 @@ function calculateSet(x0,y0,x,y){
   return i;
 }
 
-onmouseup = function(e) {
-    div.hidden = 1;
+const getRelativePoint = (pixel, length, set) =>
+   set.start + (pixel / length) * (set.end - set.start)
 
+//mandelbrot.js
+canvas.addEventListener('dblclick', e => {
+    const zfw = (width * ZOOM_FACTOR)
+    const zfh = (height * ZOOM_FACTOR)
 
-    //Tomo la posicion del puntero cuando clickea
-    x1 = e.clientX;
-    y1 = e.clientY;
+    REAL_SET = {
+        start: getRelativePoint(e.pageX - canvas.offsetLeft - zfw, width, REAL_SET),
+        end: getRelativePoint(e.pageX - canvas.offsetLeft + zfw, width, REAL_SET)
+    }
+    IMAGINARY_SET = {
+        start: getRelativePoint(e.pageY - canvas.offsetTop - zfh, height, IMAGINARY_SET),
+        end: getRelativePoint(e.pageY - canvas.offsetTop + zfh, height, IMAGINARY_SET)
+    }
 
-
-    //x2 = x2 / 2;
-    //y2 = y2 / 2;
-
-    ratio /= 2;
-
-    draw();
-};
+    draw()
+})
