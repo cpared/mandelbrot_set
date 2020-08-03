@@ -22,28 +22,21 @@ ctx.canvas.height = height;
 
 
 function draw(){
-  
-  var stepx = 1 / (width / x2);
-  var stepy = 1 / (height / y2);
+
+  var step = 1 / (width / x2);
 
   //recorro todo el canvas
   for(var x = 0 ; x < width ; x++){
     for(var y = 0 ; y < height ; y++){
 
       //relacion los puntos del canvas con el punto a calcular
-      var xi = ((x - x1) / width) * stepx;
-      var yi = ((y - y1) / height) * stepy;
+      //var xi = (x - x1) / width;
+      //var yi = (y - y1) / height;
 
-      var xf = ((x2 - xi) / width) * stepx;
-      var yf = ((y2 - xf) / height) * stepy;
+      var xi = x * step;
+      var yi = y * step;
 
-      var mandelbrot_point = calculateSet(xi, yi, xf, yf, ratio, zoom);
-
-      // asigno colores en base al resultado
-      var bright = mandelbrot_point % 255;
-      if (mandelbrot_point === MAX_ITER){
-          bright = 0;
-      }
+      var mandelbrot_point = calculateSet(xi, yi, x2, y2, ratio, zoom);
 
       if(mandelbrot_point == MAX_ITER) {
           ctx.fillStyle = '#000';
@@ -52,10 +45,12 @@ function draw(){
           ctx.fillStyle = 'hsl(0, 100%, ' + mandelbrot_point + '%)';
           ctx.fillRect(x,y, 1,1); // Draw a colorful pixel
       }
+
     }
   }
 }
 
+setInterval(draw,100);
 
 // Mandelbrot set we need to get de imaginary part of C and the real part.
 // As we know, if |Zn| > 2 then the set converge, so we need to iterate between -2 and 2
@@ -84,39 +79,14 @@ function calculateSet(x0,y0,x,y, ratio, zoom){
   return i;
 }
 
-function reCalc() {
-    var x3 = Math.min(x1,x2);
-    var x4 = Math.max(x1,x2);
-    var y3 = Math.min(y1,y2);
-    var y4 = Math.max(y1,y2);
-    div.style.left = x3 + 'px';
-    div.style.top = y3 + 'px';
-    div.style.width = x4 - x3 + 'px';
-    div.style.height = y4 - y3 + 'px';
-
-}
-onmousedown = function(e) {
-    div.hidden = 0;
-    x1 = e.clientX;
-    y1 = e.clientY;
-    reCalc();
-};
-onmousemove = function(e) {
-    x2 = e.clientX;
-    y2 = e.clientY;
-    reCalc();
-};
 onmouseup = function(e) {
     div.hidden = 1;
 
-    //recalculo el ratio
-    ratio = Math.min(width / x2, height / y2);
+    //Tomo la posicion del puntero cuando clickea
+    x1 = e.clientX;
+    y1 = e.clientY;
 
-    //recalculo zoom
-    zoomx = ((x2 - x1) / width) * zoom;
-    zoomy = ((y2 - y1) / height) * zoom;
-
-    zoom = Math.max(zoomx, zoomy);
+    zoom *= 0.5;
 
     draw();
 };
