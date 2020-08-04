@@ -1,5 +1,4 @@
-
-const MAX_ITER = 100;
+const MAX_ITER = 10000;
 var width = window.innerWidth;
 var height = window.innerHeight;
 
@@ -18,6 +17,9 @@ var ctx = canvas.getContext('2d');
 
 ctx.canvas.width = width;
 ctx.canvas.height = height;
+
+
+
 
 
 // Main function.
@@ -78,8 +80,8 @@ const getRelativePoint = (pixel, length, set) =>
 
 // Doble click event
 canvas.addEventListener('click', e => {
-    var time = new Timer();
-    time.run();
+
+    var start =  Date.now();
 
     const zfw = (width * ZOOM_FACTOR)
     const zfh = (height * ZOOM_FACTOR)
@@ -95,5 +97,7 @@ canvas.addEventListener('click', e => {
 
     draw()
 
-    time.stop()
+    var end =  Date.now();
+    console.log(`Execution time: ${end - start} ms`);
+
 })
