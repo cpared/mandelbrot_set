@@ -1,18 +1,17 @@
+
 const MAX_ITER = 100;
 var width = window.innerWidth;
 var height = window.innerHeight;
 
 var ratio = 1;
 
-let REAL_SET = { start: -2, end: 1 }
-let IMAGINARY_SET = { start: -1, end: 1 }
-let ZOOM_FACTOR = 0.1
+let REAL_SET = { start: -2, end: 1 };
+let IMAGINARY_SET = { start: -1, end: 1 };
+let ZOOM_FACTOR = 0.1;
 
 var div = document.getElementById('div');
 var x1 = 0;
 var y1 = 0;
-var x2 = width;
-var y2 = height;
 
 var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext('2d');
@@ -20,9 +19,9 @@ var ctx = canvas.getContext('2d');
 ctx.canvas.width = width;
 ctx.canvas.height = height;
 
-var scale = Math.min(canvas.width / 600, canvas.height / 600);
 
-
+// Main function.
+// We call draw every time we doble click event
 function draw(){
 
   //recorro todo el canvas
@@ -77,8 +76,11 @@ function calculateSet(x0,y0,x,y){
 const getRelativePoint = (pixel, length, set) =>
    set.start + (pixel / length) * (set.end - set.start)
 
-//mandelbrot.js
-canvas.addEventListener('dblclick', e => {
+// Doble click event
+canvas.addEventListener('click', e => {
+    var time = new Timer();
+    time.run();
+
     const zfw = (width * ZOOM_FACTOR)
     const zfh = (height * ZOOM_FACTOR)
 
@@ -92,4 +94,6 @@ canvas.addEventListener('dblclick', e => {
     }
 
     draw()
+
+    time.stop()
 })
